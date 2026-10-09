@@ -1,0 +1,12 @@
+{
+  "model": "resnet18",
+  "val_accuracy": 0.7672,
+  "val_f1_macro": 0.75,
+  "val_f1_cardboard": 0.8772,
+  "val_f1_glass": 0.7068,
+  "val_f1_metal": 0.7285,
+  "val_f1_paper": 0.8404,
+  "val_f1_plastic": 0.7132,
+  "val_f1_trash": 0.6341,
+  "train_minutes": 6.5
+}

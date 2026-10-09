@@ -1,4 +1,8 @@
 # Journal de bord · Maryem
+## 2026-10-.. · Tâche 3 : baselines du classifieur
+- Fait : train_cls.py, petit CNN (val F1 ...), ResNet18 gelé (val F1 ...), suivi MLflow
+- Compris : ...
+- Bloqué : ...
 
 Une entrée par séance : fait / compris / bloqué. La plus récente en haut.
 

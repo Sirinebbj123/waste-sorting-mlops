@@ -8,3 +8,10 @@ runs/
 mlruns/
 node_modules/
 .ipynb_checkpoints/
+# MLflow local et modèles entraînés
+mlflow.db
+mlruns/
+mlartifacts/
+ml/models/
+ml/runs/
+*.pt

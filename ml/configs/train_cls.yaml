@@ -1,0 +1,19 @@
+# Réglages de l'entraînement du classifieur (TrashNet)
+seed: 42
+data_dir: ml/data/processed/trashnet
+experiment: trashnet-classifier
+class_weights: true      # pondère la loss pour que la classe rare "trash" compte plus
+num_threads: 4           # nombre de cœurs CPU utilisés par PyTorch
+
+models:
+  simple_cnn:            # petit CNN écrit à la main, appris de zéro
+    img_size: 128
+    epochs: 15
+    batch_size: 32
+    lr: 0.001
+  resnet18:              # transfer learning : ResNet18 pré-entraîné sur ImageNet
+    img_size: 224
+    epochs: 5
+    batch_size: 32
+    lr: 0.001
+    freeze_backbone: true  # seule la dernière couche apprend (feature extraction)
