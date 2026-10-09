@@ -28,3 +28,9 @@ pandas
 matplotlib
 pillow
 pyyaml
+torch
+torchvision
+ultralytics
+mlflow
+pandas
+matplotlib
