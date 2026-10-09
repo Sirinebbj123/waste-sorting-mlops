@@ -1,0 +1,8 @@
+# Paramètres du projet, lus par les scripts et par DVC
+seed: 42
+
+trashnet:
+  split:
+    train: 0.70
+    val: 0.15
+    test: 0.15
