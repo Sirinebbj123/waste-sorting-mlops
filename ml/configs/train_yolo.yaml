@@ -1,0 +1,12 @@
+# Réglages de l'entraînement du détecteur (Roboflow, une classe "waste")
+seed: 42
+data: ml/data/processed/roboflow/data.yaml
+experiment: roboflow-detector
+run_name: yolov8n_416
+model: yolov8n.pt       # le plus petit YOLOv8, pré-entraîné sur COCO
+imgsz: 416              # 640 est plus précis mais beaucoup plus lent sur CPU
+epochs: 10
+batch: 8                # petit lot pour 8 Go de RAM
+patience: 5             # arrêt anticipé si la validation ne progresse plus
+workers: 0              # le plus sûr sous Windows
+device: cpu
