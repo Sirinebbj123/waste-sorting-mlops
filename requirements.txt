@@ -22,3 +22,9 @@ pydantic
 # Qualite et tests
 pytest
 ruff
+jupyter
+ipykernel
+pandas
+matplotlib
+pillow
+pyyaml
