@@ -1,0 +1,14 @@
+{
+  "photos_origine": 1199,
+  "images": 2877,
+  "classes": 1,
+  "train_photos": 839,
+  "train_images": 2001,
+  "train_boxes": 2782,
+  "val_photos": 180,
+  "val_images": 422,
+  "val_boxes": 604,
+  "test_photos": 180,
+  "test_images": 454,
+  "test_boxes": 637
+}

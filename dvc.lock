@@ -5,13 +5,13 @@ stages:
     deps:
     - path: ml/data/raw/trashnet
       hash: md5
-      md5: 2dc95c0f0adfa3c354b4c80d8aff2c3b.dir
-      size: 43282402
-      nfiles: 2527
+      md5: e05c7d7859046b1f3259a43d7918f7ac.dir
+      size: 43288550
+      nfiles: 2528
     - path: ml/src/data/prepare_trashnet.py
       hash: md5
-      md5: 2bbe89d0a2a566f80e5a1a645be5762a
-      size: 4043
+      md5: 27ffb211e22191fc0f2a75bf0bf57467
+      size: 4154
     params:
       params.yaml:
         seed: 42
@@ -30,3 +30,34 @@ stages:
       hash: md5
       md5: 03e96a7ffe6bb93ddc08c2402810ee4b
       size: 550
+  prepare_roboflow:
+    cmd: python ml/src/data/prepare_roboflow.py
+    deps:
+    - path: ml/data/raw/roboflow
+      hash: md5
+      md5: 6547054fbd960980438c521ae84d116b.dir
+      size: 109877543
+      nfiles: 5757
+    - path: ml/src/data/prepare_roboflow.py
+      hash: md5
+      md5: 828d5341da2498fea0c23e94fff6e422
+      size: 5636
+    params:
+      params.yaml:
+        roboflow:
+          split:
+            train: 0.7
+            val: 0.15
+            test: 0.15
+          single_class: true
+        seed: 42
+    outs:
+    - path: ml/data/processed/roboflow
+      hash: md5
+      md5: f6d5ba0da250d563cc25cf8c0b7bffb5.dir
+      size: 109863978
+      nfiles: 5755
+    - path: ml/reports/roboflow_split.json
+      hash: md5
+      md5: dfc00ee188650b3382d055bc0bc6872e
+      size: 272
