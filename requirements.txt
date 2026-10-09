@@ -1,0 +1,24 @@
+# Deep Learning
+torch
+torchvision
+ultralytics
+# Donnees et images
+numpy
+pandas
+pillow
+opencv-python
+scikit-learn
+matplotlib
+# MLOps
+dvc
+mlflow
+onnx
+onnxruntime
+# API
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+# Qualite et tests
+pytest
+ruff

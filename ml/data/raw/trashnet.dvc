@@ -1,0 +1,6 @@
+outs:
+- md5: 4313069f55a7df178a65f2bff0136621.dir
+  size: 43288847
+  nfiles: 2530
+  hash: md5
+  path: trashnet
