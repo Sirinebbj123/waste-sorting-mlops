@@ -12,3 +12,16 @@ stages:
     metrics:
       - ml/reports/trashnet_split.json:
           cache: false
+  prepare_roboflow:
+    cmd: python ml/src/data/prepare_roboflow.py
+    deps:
+      - ml/src/data/prepare_roboflow.py
+      - ml/data/raw/roboflow
+    params:
+      - seed
+      - roboflow
+    outs:
+      - ml/data/processed/roboflow
+    metrics:
+      - ml/reports/roboflow_split.json:
+          cache: false      
