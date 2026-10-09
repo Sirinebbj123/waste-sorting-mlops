@@ -1,0 +1,14 @@
+stages:
+  prepare_trashnet:
+    cmd: python ml/src/data/prepare_trashnet.py
+    deps:
+      - ml/src/data/prepare_trashnet.py
+      - ml/data/raw/trashnet
+    params:
+      - seed
+      - trashnet
+    outs:
+      - ml/data/processed/trashnet
+    metrics:
+      - ml/reports/trashnet_split.json:
+          cache: false

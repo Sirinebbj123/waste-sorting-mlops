@@ -1,0 +1,32 @@
+schema: '2.0'
+stages:
+  prepare_trashnet:
+    cmd: python ml/src/data/prepare_trashnet.py
+    deps:
+    - path: ml/data/raw/trashnet
+      hash: md5
+      md5: 2dc95c0f0adfa3c354b4c80d8aff2c3b.dir
+      size: 43282402
+      nfiles: 2527
+    - path: ml/src/data/prepare_trashnet.py
+      hash: md5
+      md5: 2bbe89d0a2a566f80e5a1a645be5762a
+      size: 4043
+    params:
+      params.yaml:
+        seed: 42
+        trashnet:
+          split:
+            train: 0.7
+            val: 0.15
+            test: 0.15
+    outs:
+    - path: ml/data/processed/trashnet
+      hash: md5
+      md5: fd7e5248d1c98cd3237dac9b62db6c19.dir
+      size: 43201834
+      nfiles: 2521
+    - path: ml/reports/trashnet_split.json
+      hash: md5
+      md5: 03e96a7ffe6bb93ddc08c2402810ee4b
+      size: 550
