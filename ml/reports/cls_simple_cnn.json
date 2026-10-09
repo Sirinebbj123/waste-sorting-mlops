@@ -1,0 +1,12 @@
+{
+  "model": "simple_cnn",
+  "val_accuracy": 0.6243,
+  "val_f1_macro": 0.6072,
+  "val_f1_cardboard": 0.871,
+  "val_f1_glass": 0.6169,
+  "val_f1_metal": 0.4444,
+  "val_f1_paper": 0.5926,
+  "val_f1_plastic": 0.6667,
+  "val_f1_trash": 0.4516,
+  "train_minutes": 10.7
+}
