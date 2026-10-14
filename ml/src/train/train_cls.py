@@ -3,6 +3,10 @@
 Utilisation (depuis la racine du projet, venv activé) :
     python ml/src/train/train_cls.py --model simple_cnn
     python ml/src/train/train_cls.py --model resnet18
+    python ml/src/train/train_cls.py --model resnet18_ft
+
+Suivi MLflow : si la variable d'environnement MLFLOW_TRACKING_URI est définie (DagsHub),
+les runs y sont envoyés ; sinon ils restent en local dans mlflow.db.
 
 Lit    : ml/configs/train_cls.yaml
          ml/data/processed/trashnet/{train,val}/<classe>/*.jpg   (produit par dvc repro)
@@ -15,6 +19,7 @@ Le jeu de test n'est PAS utilisé ici : il est réservé à l'évaluation finale
 
 import argparse
 import json
+import os
 import random
 import subprocess
 import time
@@ -64,11 +69,14 @@ class SimpleCNN(nn.Module):
 def creer_modele(nom, n_classes, cfg):
     if nom == "simple_cnn":
         return SimpleCNN(n_classes)
-    if nom == "resnet18":
+    if nom.startswith("resnet18"):
         modele = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
         if cfg.get("freeze_backbone", True):
             for p in modele.parameters():
                 p.requires_grad = False  # on gèle tout le réseau pré-entraîné
+        for bloc in cfg.get("unfreeze", []):  # fine-tuning partiel : on dégèle les derniers blocs
+            for p in getattr(modele, bloc).parameters():
+                p.requires_grad = True
         modele.fc = nn.Linear(modele.fc.in_features, n_classes)  # nouvelle couche, entraînable
         return modele
     raise ValueError(f"Modèle inconnu : {nom}")
@@ -165,11 +173,11 @@ def version_donnees(etape):
 # ---------- Entraînement ----------
 
 def main():
+    cfg_globale = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", choices=["simple_cnn", "resnet18"], required=True)
+    parser.add_argument("--model", choices=list(cfg_globale["models"]), required=True)
     nom = parser.parse_args().model
 
-    cfg_globale = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
     cfg = cfg_globale["models"][nom]
     seed = cfg_globale["seed"]
     random.seed(seed)
@@ -187,7 +195,14 @@ def main():
     else:
         poids = None
     critere = nn.CrossEntropyLoss(weight=poids)
-    optimiseur = torch.optim.Adam([p for p in modele.parameters() if p.requires_grad], lr=cfg["lr"])
+    # Deux vitesses d'apprentissage : la nouvelle couche (fc) apprend vite,
+    # les blocs pré-entraînés dégelés apprennent lentement pour ne pas "oublier" ImageNet
+    tete = [p for n, p in modele.named_parameters() if p.requires_grad and n.startswith(("fc", "classifier"))]
+    corps = [p for n, p in modele.named_parameters() if p.requires_grad and not n.startswith(("fc", "classifier"))]
+    groupes = [{"params": tete, "lr": cfg["lr"]}]
+    if corps:
+        groupes.append({"params": corps, "lr": cfg.get("backbone_lr", cfg["lr"])})
+    optimiseur = torch.optim.Adam(groupes)
 
     dossier_modeles = ROOT / "ml" / "models"
     dossier_rapports = ROOT / "ml" / "reports"
@@ -195,14 +210,16 @@ def main():
     dossier_rapports.mkdir(parents=True, exist_ok=True)
     chemin_poids = dossier_modeles / f"cls_{nom}.pt"
 
-    mlflow.set_tracking_uri("sqlite:///" + (ROOT / "mlflow.db").as_posix())
+    mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI") or "sqlite:///" + (ROOT / "mlflow.db").as_posix())
     mlflow.set_experiment(cfg_globale["experiment"])
     with mlflow.start_run(run_name=nom):
         mlflow.set_tags({"git_commit": commit_git(),
                          "data_version": version_donnees("prepare_trashnet"),
                          "model_family": nom})
+        n_entrainables = sum(p.numel() for p in modele.parameters() if p.requires_grad)
         mlflow.log_params({"model": nom, "seed": seed, "class_weights": poids is not None,
-                           "n_train": len(cibles), **cfg})
+                           "n_train": len(cibles), "trainable_params": n_entrainables,
+                           **{k: str(v) for k, v in cfg.items()}})
 
         meilleur_f1, debut = -1.0, time.time()
         for epoque in range(1, cfg["epochs"] + 1):

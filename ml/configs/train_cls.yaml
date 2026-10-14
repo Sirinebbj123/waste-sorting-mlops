@@ -17,3 +17,11 @@ models:
     batch_size: 32
     lr: 0.001
     freeze_backbone: true  # seule la dernière couche apprend (feature extraction)
+  resnet18_ft:           # fine-tuning partiel : on dégèle le dernier bloc (layer4)
+    img_size: 224
+    epochs: 8
+    batch_size: 32
+    lr: 0.001            # vitesse de la nouvelle couche fc
+    backbone_lr: 0.0001  # vitesse 10 fois plus faible pour layer4 (déjà pré-entraîné)
+    freeze_backbone: true
+    unfreeze: [layer4]
