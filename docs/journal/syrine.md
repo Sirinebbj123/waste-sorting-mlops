@@ -1,5 +1,22 @@
 
 # Journal de bord · Syrine
+## 2026-10-14 · Tâche 4B : YOLOv8n 640 px sur Colab
+- Fait : train_yolo.py accepte --config, réglages train_yolo_640.yaml, notebook Colab
+  (code depuis GitHub, données depuis DagsHub avec dvc pull, run envoyé sur MLflow DagsHub)
+- Résultats sur val :
+  | Run | imgsz | Époques | mAP50 | mAP50-95 | Précision | Rappel | Durée |
+  |---|---|---|---|---|---|---|---|
+  | yolov8n_416 (CPU, tâche 3) | 416 | 10 | 0.8965 | 0.548 | 0.9464 | 0.7881 | 53.5 min |
+  | yolov8n_640 (GPU T4, Colab) | 640 | ... | 0.8984 | 0.5648 | 0.9288 | 0.8207 | 13.7 min |
+- Gain : mAP50 +0.19 point (quasi stable), mAP50-95 +1.68 point, rappel +3.26 points, précision -1.76 point
+- Lecture : en 640 px, le modèle trouve plus de déchets (rappel 0.79 → 0.82) et ses boîtes sont mieux placées
+  (mAP50-95 en hausse), au prix d'un peu plus de fausses détections (précision 0.95 → 0.93).
+  mAP50 était déjà très haut (0.90) : la marge de progrès est surtout sur la précision des boîtes.
+- Early stopping : arrêt à l'époque ... sur 30 (ou : les 30 époques ont été faites)
+- Temps : 13.7 min sur GPU T4 contre 53.5 min sur CPU, soit environ 4 fois plus rapide
+  avec 3 fois plus d'époques et des images plus grandes
+- Compris : token hors Git, dvc pull sur une autre machine, MLflow distant sur DagsHub
+- Bloqué : ...
 ## 2026-10-.. · Tâche 4A : données sur DagsHub
 - Fait : dépôt DagsHub relié à GitHub, remote DVC "origin", dvc push (... fichiers), Maryem invitée
 - Compris : .dvc/config (adresse, dans Git) et .dvc/config.local (token, hors Git)

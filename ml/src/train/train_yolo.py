@@ -1,9 +1,13 @@
 """Fine-tune YOLOv8n sur le dataset Roboflow préparé (une classe "waste") et trace tout dans MLflow.
 
 Utilisation (depuis la racine du projet, venv activé) :
-    python ml/src/train/train_yolo.py
+    python ml/src/train/train_yolo.py                                          # réglages CPU (416 px)
+    python ml/src/train/train_yolo.py --config ml/configs/train_yolo_640.yaml  # réglages GPU (Colab)
 
-Lit    : ml/configs/train_yolo.yaml
+Suivi MLflow : si la variable d'environnement MLFLOW_TRACKING_URI est définie (DagsHub),
+les runs y sont envoyés ; sinon ils restent en local dans mlflow.db.
+
+Lit    : ml/configs/train_yolo.yaml  (ou le fichier passé avec --config)
          ml/data/processed/roboflow/  (produit par dvc repro)
 Écrit  : ml/runs/<run_name>/          (sorties Ultralytics : poids, courbes, hors Git)
          ml/reports/yolo_<run_name>.json  (résultats sur val, dans Git)
@@ -12,7 +16,9 @@ Lit    : ml/configs/train_yolo.yaml
 Le jeu de test n'est PAS utilisé ici : il est réservé à l'évaluation finale.
 """
 
+import argparse
 import json
+import os
 import subprocess
 import time
 from pathlib import Path
@@ -23,7 +29,7 @@ import yaml
 from ultralytics import YOLO, settings
 
 ROOT = Path(__file__).resolve().parents[3]
-CONFIG = ROOT / "ml" / "configs" / "train_yolo.yaml"
+CONFIG_DEFAUT = ROOT / "ml" / "configs" / "train_yolo.yaml"
 
 
 def commit_git():
@@ -42,11 +48,16 @@ def version_donnees(etape):
 
 
 def main():
-    cfg = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", default=str(CONFIG_DEFAUT))
+    chemin_config = Path(parser.parse_args().config)
+    if not chemin_config.is_absolute():
+        chemin_config = ROOT / chemin_config
+    cfg = yaml.safe_load(chemin_config.read_text(encoding="utf-8"))
     data_yaml = (ROOT / cfg["data"]).resolve()  # chemin absolu : Ultralytics trouve les images à côté
     settings.update({"mlflow": False})  # on trace nous-mêmes, pour garder le contrôle
 
-    mlflow.set_tracking_uri("sqlite:///" + (ROOT / "mlflow.db").as_posix())
+    mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI") or "sqlite:///" + (ROOT / "mlflow.db").as_posix())
     mlflow.set_experiment(cfg["experiment"])
     with mlflow.start_run(run_name=cfg["run_name"]):
         mlflow.set_tags({"git_commit": commit_git(),

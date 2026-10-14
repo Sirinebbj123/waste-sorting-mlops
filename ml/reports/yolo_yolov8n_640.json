@@ -1,0 +1,9 @@
+{
+  "model": "yolov8n.pt",
+  "imgsz": 640,
+  "val_mAP50": 0.8984,
+  "val_mAP50_95": 0.5648,
+  "val_precision": 0.9288,
+  "val_recall": 0.8207,
+  "train_minutes": 13.7
+}
