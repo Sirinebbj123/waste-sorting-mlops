@@ -1,4 +1,9 @@
+
 # Journal de bord · Syrine
+## 2026-10-.. · Tâche 4A : données sur DagsHub
+- Fait : dépôt DagsHub relié à GitHub, remote DVC "origin", dvc push (... fichiers), Maryem invitée
+- Compris : .dvc/config (adresse, dans Git) et .dvc/config.local (token, hors Git)
+- Bloqué : ...
 ## 2026-10-09 · Tâche 3 : baseline du détecteur
 - Fait : script train_yolo.py avec suivi MLflow ; YOLOv8n fine-tuné sur une classe "waste", imgsz 416, 10 époques sur CPU (53,5 min). Sur val : mAP@0.5 0,896, mAP@0.5:0.95 0,548, précision 0,946, rappel 0,788
 - Compris : la précision mesure si les déchets détectés sont vrais, le rappel si on n'en oublie pas ; ici le modèle oublie environ 1 déchet sur 5. Le mAP@0.5:0.95 plus bas montre que les boxes ne sont pas encore très précises. Pas de sur-apprentissage (val_box_loss proche de train_box_loss)
