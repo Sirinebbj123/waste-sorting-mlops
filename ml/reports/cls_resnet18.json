@@ -8,5 +8,5 @@
   "val_f1_paper": 0.8404,
   "val_f1_plastic": 0.7132,
   "val_f1_trash": 0.6341,
-  "train_minutes": 6.5
+  "train_minutes": 6.4
 }
