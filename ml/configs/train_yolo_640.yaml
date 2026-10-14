@@ -1,0 +1,12 @@
+# Réglages pour un entraînement sur GPU (Google Colab), plus long et en meilleure résolution
+seed: 42
+data: ml/data/processed/roboflow/data.yaml
+experiment: roboflow-detector
+run_name: yolov8n_640
+model: yolov8n.pt
+imgsz: 640              # résolution d'origine des images Roboflow
+epochs: 30
+batch: 16
+patience: 10
+workers: 2
+device: 0               # 0 = premier GPU ; mettre cpu si pas de GPU
