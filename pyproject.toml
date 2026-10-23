@@ -1,0 +1,20 @@
+[project]
+name = "waste-sorting-mlops"
+version = "0.5.0"
+description = "Détection de déchets et aide au tri sélectif"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["ml/notebooks"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "api/tests"]
+pythonpath = [".", "api"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app", "waste_core"]
