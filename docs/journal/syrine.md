@@ -1,5 +1,10 @@
 
 # Journal de bord · Syrine
+## 2026-10-23 · Tâche 6 : API FastAPI /predict
+- Fait : schemas.py, inference.py (modèles chargés une fois), POST /predict, tests avec un faux pipeline, versions fixées
+- Essai : /docs et curl.exe, photo ... → ... déchets, ... ms
+- Compris : route FastAPI, UploadFile, Depends et dependency_overrides, schéma Pydantic, uvicorn
+- Bloqué : ...
 ## 2026-10-23 · Tâche 5 : étape train_yolo, .dvcignore, versions fixées
 - Fait : train_yolo dans dvc.yaml, poids Colab enregistrés avec dvc commit, .dvcignore (*.cache), requirements.txt avec versions
 - Compris : pourquoi YOLO « modifiait » les données (fichiers .cache), dvc commit vs dvc repro
