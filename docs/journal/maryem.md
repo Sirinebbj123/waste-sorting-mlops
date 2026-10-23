@@ -1,4 +1,8 @@
 # Journal de bord · Maryem
+## 2026-10-23 · Tâche 6 : page web de démo
+- Fait : page index.html (envoi d'une photo, boîtes colorées par poubelle, tableau), test, README
+- Compris : fetch + FormData, dessin sur un canvas, page servie par FastAPI
+- Bloqué : ...
 ## 2026-10-23 · Tâche 6 : cœur du pipeline (waste_core)
 - Fait : waste_core/bins.py (matière → poubelle), waste_core/pipeline.py (YOLO trouve, ResNet18 classe), tests pytest
 - Essai : photo ... → ... déchets trouvés, matières ..., en ... s
