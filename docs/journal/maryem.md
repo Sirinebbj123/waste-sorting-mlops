@@ -1,4 +1,10 @@
 # Journal de bord · Maryem
+## 2026-10-.. · Tâche 5 : étape train_cls dans le pipeline DVC
+- Fait : étape train_cls dans dvc.yaml (params, outs, metrics, plots), dvc commit sans réentraîner, dvc push
+- Expérience DVC : 5 époques → val F1 macro ... (contre 0.894 avec 8), val accuracy ... (contre 0.905) ; on garde 8
+- Compris : deps / params / outs / metrics, dvc commit, dvc exp run -S, dvc exp show
+- Bloqué : ...
+
 ## 2026-10-14 · Tâche 4 : ResNet18 en fine-tuning partiel
 - Fait : données récupérées depuis DagsHub (dvc pull, data_version fd7e5248), resnet18 refait (val F1 macro 0.750, acc 0.767, 6.4 min), resnet18_ft (val F1 macro 0.894, acc 0.905, 19 min), runs comparés sur MLflow DagsHub
 - Résultats : +14.4 points de F1 macro pour +12.6 min d'entraînement. Trash : F1 0.634 → ? (classe la plus faible de la baseline). val_loss en fin d'entraînement : ? (si elle remonte, 5 époques suffiraient)
