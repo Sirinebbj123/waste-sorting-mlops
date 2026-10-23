@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tri des déchets</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 16px;
+           background: #f6f7f5; color: #1d1d1b; }
+    h1 { font-size: 1.6rem; margin-bottom: 4px; }
+    .sous-titre { color: #5b5b57; margin-top: 0; }
+    .zone { background: white; border-radius: 12px; padding: 16px; margin-top: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .08); }
+    button { background: #2f6f3e; color: white; border: 0; border-radius: 8px;
+             padding: 10px 18px; font-size: 1rem; cursor: pointer; }
+    button:disabled { background: #9bb5a1; cursor: wait; }
+    canvas { max-width: 100%; border-radius: 8px; display: none; margin-top: 12px; }
+    #message { margin-top: 12px; }
+    .erreur { color: #b42318; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #e4e4e0; }
+    .pastille { display: inline-block; width: 12px; height: 12px; border-radius: 50%;
+                margin-right: 6px; vertical-align: middle; }
+    .petit { color: #5b5b57; font-size: .85rem; }
+  </style>
+</head>
+<body>
+  <h1>Tri des déchets</h1>
+  <p class="sous-titre">Envoie une photo : chaque déchet est encadré avec sa matière et sa poubelle.</p>
+
+  <div class="zone">
+    <!-- capture="environment" : sur téléphone, propose directement l'appareil photo -->
+    <input type="file" id="fichier" accept="image/*" capture="environment">
+    <button id="analyser" disabled>Analyser</button>
+    <div id="message"></div>
+    <canvas id="dessin"></canvas>
+    <table id="tableau" hidden>
+      <thead><tr><th>#</th><th>Matière</th><th>Poubelle</th><th>Confiance</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p id="versions" class="petit"></p>
+  </div>
+
+  <script>
+    const COULEURS = { jaune: "#e0b100", verte: "#2e8b3d", grise: "#6b6b6b" };
+    const champ = document.getElementById("fichier");
+    const bouton = document.getElementById("analyser");
+    const message = document.getElementById("message");
+    const dessin = document.getElementById("dessin");
+    const tableau = document.getElementById("tableau");
+    let image = null;
+
+    champ.addEventListener("change", () => {
+      const f = champ.files[0];
+      if (!f) return;
+      image = new Image();
+      image.onload = () => { dessiner([]); bouton.disabled = false; };
+      image.src = URL.createObjectURL(f);
+      message.textContent = "";
+      tableau.hidden = true;
+    });
+
+    function dessiner(detections) {
+      dessin.width = image.naturalWidth;
+      dessin.height = image.naturalHeight;
+      const ctx = dessin.getContext("2d");
+      ctx.drawImage(image, 0, 0);
+      const epaisseur = Math.max(2, image.naturalWidth / 200);
+      ctx.font = `${epaisseur * 8}px system-ui`;
+      detections.forEach((d, i) => {
+        const [x1, y1, x2, y2] = d.boite;
+        const couleur = COULEURS[d.poubelle] || "red";
+        ctx.strokeStyle = couleur;
+        ctx.lineWidth = epaisseur;
+        ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+        const texte = `${i + 1}. ${d.matiere_fr}`;
+        const hauteurTexte = epaisseur * 10;
+        ctx.fillStyle = couleur;
+        ctx.fillRect(x1, Math.max(0, y1 - hauteurTexte), ctx.measureText(texte).width + 8, hauteurTexte);
+        ctx.fillStyle = "white";
+        ctx.fillText(texte, x1 + 4, Math.max(hauteurTexte, y1) - epaisseur * 2);
+      });
+      dessin.style.display = "block";
+    }
+
+    bouton.addEventListener("click", async () => {
+      const donnees = new FormData();
+      donnees.append("fichier", champ.files[0]);
+      bouton.disabled = true;
+      message.className = "";
+      message.textContent = "Analyse en cours…";
+      try {
+        const reponse = await fetch("/predict", { method: "POST", body: donnees });
+        const corps = await reponse.json();
+        if (!reponse.ok) throw new Error(corps.detail || reponse.statusText);
+        afficher(corps);
+      } catch (e) {
+        message.className = "erreur";
+        message.textContent = "Erreur : " + e.message;
+      } finally {
+        bouton.disabled = false;
+      }
+    });
+
+    function afficher(corps) {
+      dessiner(corps.detections);
+      const pluriel = corps.nb_dechets > 1 ? "s" : "";
+      message.textContent = corps.mode === "image_entiere"
+        ? "Aucun déchet isolé trouvé : l'image entière a été classée."
+        : `${corps.nb_dechets} déchet${pluriel} trouvé${pluriel} en ${corps.duree_ms} ms.`;
+      const lignes = tableau.querySelector("tbody");
+      lignes.innerHTML = "";
+      corps.detections.forEach((d, i) => {
+        const ligne = document.createElement("tr");
+        ligne.innerHTML = `<td>${i + 1}</td><td>${d.matiere_fr}</td>
+          <td><span class="pastille" style="background:${COULEURS[d.poubelle]}"></span>${d.poubelle}</td>
+          <td>${Math.round(d.confiance_matiere * 100)} %</td>`;
+        lignes.appendChild(ligne);
+      });
+      tableau.hidden = false;
+      document.getElementById("versions").textContent =
+        `Modèles : ${corps.versions.detecteur} · ${corps.versions.classifieur}`;
+    }
+  </script>
+</body>
+</html>
