@@ -1,17 +1,17 @@
 # Deep Learning
-torch
-torchvision
-ultralytics
+torch==2.14.1
+torchvision==0.29.1
+ultralytics==8.4.174
 # Donnees et images
-numpy
-pandas
-pillow
+numpy==2.5.3
+pandas==3.0.6
+pillow==12.3.0
 opencv-python
 scikit-learn
-matplotlib
+matplotlib==3.11.2
 # MLOps
-dvc
-mlflow
+dvc==3.67.1
+mlflow==3.17.0
 onnx
 onnxruntime
 # API
@@ -24,13 +24,7 @@ pytest
 ruff
 jupyter
 ipykernel
-pandas
-matplotlib
-pillow
-pyyaml
-torch
-torchvision
-ultralytics
-mlflow
-pandas
-matplotlib
+
+
+PyYAML==6.0.3
+
