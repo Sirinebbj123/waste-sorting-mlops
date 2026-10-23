@@ -1,5 +1,11 @@
 # Journal de bord · Maryem
-## 2026-10-.. · Tâche 5 : étape train_cls dans le pipeline DVC
+## 2026-10-23 · Tâche 6 : cœur du pipeline (waste_core)
+- Fait : waste_core/bins.py (matière → poubelle), waste_core/pipeline.py (YOLO trouve, ResNet18 classe), tests pytest
+- Essai : photo ... → ... déchets trouvés, matières ..., en ... s
+- Compris : même préparation d'image qu'à l'entraînement, ordre des classes d'ImageFolder, test sauté sans modèles
+- Bloqué : ...
+
+## 2026-10-23 · Tâche 5 : étape train_cls dans le pipeline DVC
 - Fait : étape train_cls dans dvc.yaml (params, outs, metrics, plots), dvc commit sans réentraîner, dvc push
 - Expérience DVC : 5 époques → val F1 macro ... (contre 0.894 avec 8), val accuracy ... (contre 0.905) ; on garde 8
 - Compris : deps / params / outs / metrics, dvc commit, dvc exp run -S, dvc exp show
