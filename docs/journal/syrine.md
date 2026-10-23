@@ -1,5 +1,9 @@
 
 # Journal de bord · Syrine
+## 2026-10-23 · Tâche 5 : étape train_yolo, .dvcignore, versions fixées
+- Fait : train_yolo dans dvc.yaml, poids Colab enregistrés avec dvc commit, .dvcignore (*.cache), requirements.txt avec versions
+- Compris : pourquoi YOLO « modifiait » les données (fichiers .cache), dvc commit vs dvc repro
+- Bloqué : ...
 ## 2026-10-14 · Tâche 4B : YOLOv8n 640 px sur Colab
 - Fait : train_yolo.py accepte --config, réglages train_yolo_640.yaml, notebook Colab
   (code depuis GitHub, données depuis DagsHub avec dvc pull, run envoyé sur MLflow DagsHub)
