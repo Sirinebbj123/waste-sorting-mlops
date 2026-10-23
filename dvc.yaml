@@ -45,3 +45,22 @@ stages:
     plots:
       - ml/reports/cls_resnet18_ft_confusion.png:
           cache: false 
+  
+  train_yolo:
+    cmd: python ml/src/train/train_yolo.py --config ml/configs/train_yolo_640.yaml
+    deps:
+      - ml/src/train/train_yolo.py
+      - ml/data/processed/roboflow
+    params:
+      - ml/configs/train_yolo_640.yaml:
+          - seed
+          - model
+          - imgsz
+          - epochs
+          - batch
+          - patience
+    outs:
+      - ml/models/yolo_yolov8n_640.pt
+    metrics:
+      - ml/reports/yolo_yolov8n_640.json:
+          cache: false        

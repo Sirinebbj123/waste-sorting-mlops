@@ -99,3 +99,33 @@ stages:
       hash: md5
       md5: dc0714d559c278a94b1f62df39d6dc6b
       size: 27502
+  train_yolo:
+    cmd: python ml/src/train/train_yolo.py --config 
+      ml/configs/train_yolo_640.yaml
+    deps:
+    - path: ml/data/processed/roboflow
+      hash: md5
+      md5: f6d5ba0da250d563cc25cf8c0b7bffb5.dir
+      size: 109863978
+      nfiles: 5755
+    - path: ml/src/train/train_yolo.py
+      hash: md5
+      md5: b948e0eefa927448050b6c704c108cfc
+      size: 6033
+    params:
+      ml/configs/train_yolo_640.yaml:
+        batch: 16
+        epochs: 30
+        imgsz: 640
+        model: yolov8n.pt
+        patience: 10
+        seed: 42
+    outs:
+    - path: ml/models/yolo_yolov8n_640.pt
+      hash: md5
+      md5: 9f9c69ab952647d363c94a734d26062a
+      size: 6503978
+    - path: ml/reports/yolo_yolov8n_640.json
+      hash: md5
+      md5: c5c2e8bee12a1c202be4efe0130acc7d
+      size: 176
