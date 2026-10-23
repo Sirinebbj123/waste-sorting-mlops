@@ -61,3 +61,41 @@ stages:
       hash: md5
       md5: dfc00ee188650b3382d055bc0bc6872e
       size: 272
+  train_cls:
+    cmd: python ml/src/train/train_cls.py --model resnet18_ft
+    deps:
+    - path: ml/data/processed/trashnet
+      hash: md5
+      md5: fd7e5248d1c98cd3237dac9b62db6c19.dir
+      size: 43201834
+      nfiles: 2521
+    - path: ml/src/train/train_cls.py
+      hash: md5
+      md5: 98f42ac57be9922903d702798ba5ce65
+      size: 11127
+    params:
+      ml/configs/train_cls.yaml:
+        class_weights: true
+        models.resnet18_ft:
+          img_size: 224
+          epochs: 8
+          batch_size: 32
+          lr: 0.001
+          backbone_lr: 0.0001
+          freeze_backbone: true
+          unfreeze:
+          - layer4
+        seed: 42
+    outs:
+    - path: ml/models/cls_resnet18_ft.pt
+      hash: md5
+      md5: 81e33f25450c2be7015685a807e41dab
+      size: 44796875
+    - path: ml/reports/cls_resnet18_ft.json
+      hash: md5
+      md5: a4de50ae05035ca156da61d69d1ec00c
+      size: 278
+    - path: ml/reports/cls_resnet18_ft_confusion.png
+      hash: md5
+      md5: dc0714d559c278a94b1f62df39d6dc6b
+      size: 27502
