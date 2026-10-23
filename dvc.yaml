@@ -24,4 +24,24 @@ stages:
       - ml/data/processed/roboflow
     metrics:
       - ml/reports/roboflow_split.json:
-          cache: false      
+          cache: false     
+
+    
+  train_cls:
+    cmd: python ml/src/train/train_cls.py --model resnet18_ft
+    deps:
+      - ml/src/train/train_cls.py
+      - ml/data/processed/trashnet
+    params:
+      - ml/configs/train_cls.yaml:
+          - seed
+          - class_weights
+          - models.resnet18_ft
+    outs:
+      - ml/models/cls_resnet18_ft.pt
+    metrics:
+      - ml/reports/cls_resnet18_ft.json:
+          cache: false
+    plots:
+      - ml/reports/cls_resnet18_ft_confusion.png:
+          cache: false 
