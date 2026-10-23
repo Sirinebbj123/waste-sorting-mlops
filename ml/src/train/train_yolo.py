@@ -10,6 +10,7 @@ les runs y sont envoyés ; sinon ils restent en local dans mlflow.db.
 Lit    : ml/configs/train_yolo.yaml  (ou le fichier passé avec --config)
          ml/data/processed/roboflow/  (produit par dvc repro)
 Écrit  : ml/runs/<run_name>/          (sorties Ultralytics : poids, courbes, hors Git)
+         ml/models/yolo_<run_name>.pt  (meilleurs poids, suivis par DVC)
          ml/reports/yolo_<run_name>.json  (résultats sur val, dans Git)
          un run MLflow dans mlflow.db / mlruns/  (hors Git)
 
@@ -19,6 +20,7 @@ Le jeu de test n'est PAS utilisé ici : il est réservé à l'évaluation finale
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import time
 from pathlib import Path
@@ -121,6 +123,11 @@ def main():
                 if (d / nom).exists():
                     mlflow.log_artifact(str(d / nom))
         mlflow.log_artifact(str(dossier / "weights" / "best.pt"))
+
+        # Copie des meilleurs poids à un endroit fixe, suivi par DVC (étape train_yolo de dvc.yaml)
+        dossier_modeles = ROOT / "ml" / "models"
+        dossier_modeles.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(dossier / "weights" / "best.pt", dossier_modeles / f"yolo_{cfg['run_name']}.pt")
 
     print(json.dumps(resultat, indent=2))
     print("Résultats écrits dans", chemin_json.relative_to(ROOT))
