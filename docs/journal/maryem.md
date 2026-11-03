@@ -1,4 +1,8 @@
 # Journal de bord · Maryem
+## 2026-11-03 · Tâche 7 : application EcoTri
+- Fait : application web (photo, glisser-déposer, Ctrl+V, webcam, analyse en continu, historique, statistiques, mode sombre, téléphone)
+- Compris : HTML / CSS / JS, fetch + FormData, canvas, getUserMedia, variables CSS, localStorage
+- Bloqué : ...
 ## 2026-10-23 · Tâche 6 : page web de démo
 - Fait : page index.html (envoi d'une photo, boîtes colorées par poubelle, tableau), test, README
 - Compris : fetch + FormData, dessin sur un canvas, page servie par FastAPI
