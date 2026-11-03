@@ -22,3 +22,15 @@ class PredictResponse(BaseModel):
     detections: list[Detection]
     versions: dict[str, str] = Field(description="Fichiers de modèles et début de leur md5 DVC")
     duree_ms: float
+class Classe(BaseModel):
+    matiere: str
+    matiere_fr: str
+    poubelle: str
+
+
+class InfoResponse(BaseModel):
+    versions: dict[str, str] = Field(description="Fichiers de modèles et début de leur md5 DVC")
+    scores: dict[str, dict[str, float]] = Field(
+        description="Scores sur le jeu de validation, lus dans ml/reports/*.json"
+    )
+    classes: list[Classe]
