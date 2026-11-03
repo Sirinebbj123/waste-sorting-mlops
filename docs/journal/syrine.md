@@ -1,5 +1,9 @@
 
 # Journal de bord · Syrine
+## 2026-11-03 · Tâche 7 : /info, /static et ruff sur tout le dépôt
+- Fait : GET /info (versions DVC + scores de ml/reports), fichiers statiques servis sur /static, ruff propre sur tout le dépôt
+- Compris : StaticFiles, pourquoi ne pas reformater les scripts suivis par DVC (md5 dans dvc.lock)
+- Bloqué : ...
 ## 2026-10-23 · Tâche 6 : API FastAPI /predict
 - Fait : schemas.py, inference.py (modèles chargés une fois), POST /predict, tests avec un faux pipeline, versions fixées
 - Essai : /docs et curl.exe, photo ... → ... déchets, ... ms
