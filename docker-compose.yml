@@ -1,0 +1,11 @@
+# Lance toute l'application EcoTri : docker compose up --build -d
+services:
+  api:
+    build: .
+    image: waste-sorting-api:local
+    container_name: ecotri-api
+    ports:
+      - "8000:8000"          # PC:conteneur → http://127.0.0.1:8000
+    environment:
+      SEUIL_DETECTION: "0.25"
+    restart: unless-stopped
