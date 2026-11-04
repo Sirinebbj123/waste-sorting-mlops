@@ -1,0 +1,75 @@
+# CD : quand on pousse un tag de version (v0.8-cicd, v1.0-demo...),
+# GitHub construit l'image, la teste, la publie sur GitHub Container Registry (ghcr.io)
+# et crée la Release du tag.
+name: CD
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch: # bouton « Run workflow » dans l'onglet Actions
+
+permissions:
+  contents: write # créer la Release
+  packages: write # publier l'image sur ghcr.io
+
+jobs:
+  publier:
+    name: Publier l'image Docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Nom et version de l'image
+        run: |
+          # ghcr.io exige un nom en minuscules : ghcr.io/sirinebbj123/waste-sorting-mlops
+          echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+          echo "VERSION=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
+
+      - name: Installer Python 3.12 et DVC
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install dvc==3.67.1
+
+      - name: Récupérer les modèles depuis DagsHub (dvc pull)
+        env:
+          DAGSHUB_USER: ${{ secrets.DAGSHUB_USER }}
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: |
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user "$DAGSHUB_USER"
+          dvc remote modify origin --local password "$DAGSHUB_TOKEN"
+          dvc pull -j 4 train_cls train_yolo
+
+      - name: Construire l'image
+        run: |
+          docker build \
+            --label org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }} \
+            --label org.opencontainers.image.version=$VERSION \
+            -t $IMAGE:$VERSION -t $IMAGE:latest .
+
+      - name: Tester l'image avant de la publier
+        run: |
+          docker run -d --name ecotri-cd -p 8000:8000 $IMAGE:$VERSION
+          python scripts/smoke_test.py http://127.0.0.1:8000
+
+      - name: Se connecter à ghcr.io
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Publier l'image
+        run: |
+          docker push $IMAGE:$VERSION
+          docker push $IMAGE:latest
+
+      - name: Créer la Release du tag
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "$VERSION" > /dev/null 2>&1; then
+            echo "La Release $VERSION existe déjà"
+          else
+            gh release create "$VERSION" --title "$VERSION" --generate-notes --notes "Image Docker : \`docker pull $IMAGE:$VERSION\`"
+          fi
