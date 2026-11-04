@@ -13,3 +13,18 @@ python -m uvicorn app.main:app --app-dir api
 
 `POST /predict` (champ `fichier`) renvoie pour chaque déchet sa boîte, sa matière, sa poubelle
 et la version des modèles (début du md5 DVC).
+
+## Lancer avec Docker
+
+Prérequis : Docker Desktop démarré, et les modèles récupérés avec DVC.
+
+```powershell
+dvc pull -j 2 train_cls train_yolo
+docker compose up --build -d
+```
+
+- Application : http://127.0.0.1:8000
+- Documentation de l'API : http://127.0.0.1:8000/docs
+- État du conteneur : `docker compose ps` (doit afficher `healthy`)
+- Journaux : `docker compose logs -f api`
+- Arrêter : `docker compose down`
