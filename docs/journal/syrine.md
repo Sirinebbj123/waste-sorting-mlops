@@ -1,5 +1,10 @@
 
 # Journal de bord · Syrine
+## 2026-11-04 · Tâche 8 : image Docker
+- Fait : Dockerfile (PyTorch CPU, OpenCV headless, modèles DVC copiés, utilisateur non root, healthcheck), .dockerignore
+- Résultat : image de 2,36 Go (555 Mo compressée), construite en 14 min (puis quelques secondes grâce au cache) ; conteneur healthy, whoami → ecotri, /app ne contient que api, ml (2 modèles + reports) et waste_core
+- Compris : image / conteneur / couches et cache, ports, pourquoi .dockerignore protège les secrets
+- Bloqué : ...
 ## 2026-11-03 · Tâche 7 : /info, /static et ruff sur tout le dépôt
 - Fait : GET /info (versions DVC + scores de ml/reports), fichiers statiques servis sur /static, ruff propre sur tout le dépôt
 - Compris : StaticFiles, pourquoi ne pas reformater les scripts suivis par DVC (md5 dans dvc.lock)

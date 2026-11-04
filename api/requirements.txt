@@ -1,0 +1,9 @@
+# Dépendances de l'image Docker de l'API.
+# PyTorch (version CPU) est installé à part dans le Dockerfile.
+ultralytics==8.4.174
+numpy==2.5.3
+pillow==12.3.0
+PyYAML==6.0.3
+fastapi==0.143.0
+uvicorn[standard]==0.54.0
+python-multipart==0.0.32
