@@ -1,0 +1,6 @@
+# Pour lancer ruff et les tests (sur vos PC et dans la CI GitHub)
+# PyTorch s'installe à part, avant ce fichier (version CPU en CI)
+-r requirements.txt
+pytest==9.1.1
+httpx==0.28.1
+ruff==0.16.10

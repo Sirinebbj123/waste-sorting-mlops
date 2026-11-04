@@ -22,6 +22,8 @@ class PredictResponse(BaseModel):
     detections: list[Detection]
     versions: dict[str, str] = Field(description="Fichiers de modèles et début de leur md5 DVC")
     duree_ms: float
+
+
 class Classe(BaseModel):
     matiere: str
     matiere_fr: str

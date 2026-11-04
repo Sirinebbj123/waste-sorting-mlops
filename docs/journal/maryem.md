@@ -1,4 +1,12 @@
 # Journal de bord · Maryem
+## 2026-11-04 · Tâche 9 : CI
+- Fait : ci.yml (ruff, pytest, dvc pull, docker build, test de fumée), requirements-test.txt, smoke_test.py
+- Résultat en local : ruff OK (23 fichiers formatés), 16 tests passed, test de fumée réussi
+  (modèles de l'image = md5 de dvc.lock : yolo 9f9c69ab, classifieur 81e33f25 ; /predict en 581 ms)
+- Compris : workflow / job / step / runner, needs, secrets, status checks, test de fumée
+- Bloqué : ruff format --check refusait 6 fichiers à cause des fins de ligne Windows/Linux
+  mélangées → corrigé avec ruff format . (commit style) ; launchers pip/pytest cassés depuis
+  le déplacement sur E: → python -m pip / python -m pytest
 ## 2026-11-04 · Tâche 8 : docker compose
 - Fait : docker-compose.yml, README (lancer avec Docker), décision 0002 (choix de l'image)
 - Essai : docker compose up --build -d → healthy en 57 s, application OK
