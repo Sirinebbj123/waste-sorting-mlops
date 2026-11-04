@@ -1,4 +1,9 @@
 # Journal de bord · Maryem
+## 2026-11-04 · Tâche 8 : docker compose
+- Fait : docker-compose.yml, README (lancer avec Docker), décision 0002 (choix de l'image)
+- Essai : docker compose up --build -d → healthy en 57 s, application OK
+- Compris : compose, ports, variables d'environnement, restart, healthcheck
+- Bloqué : ...
 ## 2026-11-03 · Tâche 7 : application EcoTri
 - Fait : application web (photo, glisser-déposer, Ctrl+V, webcam, analyse en continu, historique, statistiques, mode sombre, téléphone)
 - Compris : HTML / CSS / JS, fetch + FormData, canvas, getUserMedia, variables CSS, localStorage
