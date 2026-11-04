@@ -1,0 +1,30 @@
+# Ce qui n'est jamais envoyé à Docker pendant le build
+# (plus rapide, image plus petite, et aucun secret dans l'image)
+
+# Secrets
+.env
+.dvc/config.local
+
+# Git, DVC et environnement Python local
+.git
+.dvc/cache
+.dvc/tmp
+.venv
+**/__pycache__
+.pytest_cache
+.ruff_cache
+
+# Données et sorties d'entraînement (seuls les 2 modèles de ml/models sont copiés)
+ml/data
+ml/runs
+ml/notebooks
+mlruns
+mlartifacts
+mlflow.db
+dvc_plots
+*.zip
+
+# Inutile dans l'image
+docs
+tests
+api/tests
