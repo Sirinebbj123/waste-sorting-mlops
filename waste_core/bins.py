@@ -20,7 +20,7 @@ POUBELLES = {
     "paper": "jaune",
     "plastic": "jaune",
     "metal": "jaune",
-    "glass": "verte",
+    "glass": "jaune",
     "trash": "grise",
 }
 
