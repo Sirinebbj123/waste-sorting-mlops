@@ -1,5 +1,10 @@
 
 # Journal de bord · Syrine
+## 2026-11-04 · Tâche 9 : CD et protection de main
+- Fait : cd.yml (build, test de fumée, publication sur ghcr.io, Release automatique), secrets DagsHub, badges, décision 0003, protection de main
+- Résultat : image publiée ghcr.io/sirinebbj123/waste-sorting-mlops:v0.8-cicd
+- Compris : workflow / job / step / runner, secrets GitHub, GITHUB_TOKEN, status checks obligatoires
+- Bloqué : ...
 ## 2026-11-04 · Tâche 8 : image Docker
 - Fait : Dockerfile (PyTorch CPU, OpenCV headless, modèles DVC copiés, utilisateur non root, healthcheck), .dockerignore
 - Résultat : image de 2,36 Go (555 Mo compressée), construite en 14 min (puis quelques secondes grâce au cache) ; conteneur healthy, whoami → ecotri, /app ne contient que api, ml (2 modèles + reports) et waste_core
