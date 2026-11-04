@@ -1,0 +1,96 @@
+# CI : à chaque pull request vers main (et à chaque fusion dans main),
+# GitHub vérifie le code, lance les tests, construit l'image Docker et la teste.
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Un nouveau push sur la même PR annule l'ancienne exécution (inutile de la finir)
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  qualite:
+    name: Lint et tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: api/requirements-test.txt
+
+      - name: Installer les dépendances (PyTorch CPU, API, tests)
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu torch==2.14.1 torchvision==0.29.1
+          pip install -r api/requirements-test.txt
+
+      - name: Ruff (règles de code)
+        run: ruff check .
+
+      - name: Ruff (mise en forme)
+        run: ruff format --check .
+
+      - name: Pytest
+        run: pytest -v
+
+  docker:
+    name: Build Docker et test de fumée
+    needs: qualite
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python 3.12 et DVC
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install dvc==3.67.1
+
+      - name: Récupérer les modèles depuis DagsHub (dvc pull)
+        env:
+          DAGSHUB_USER: ${{ secrets.DAGSHUB_USER }}
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: |
+          if [ -z "$DAGSHUB_TOKEN" ]; then
+            echo "::error::Secrets DAGSHUB_USER / DAGSHUB_TOKEN absents (Settings > Secrets and variables > Actions)"
+            exit 1
+          fi
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user "$DAGSHUB_USER"
+          dvc remote modify origin --local password "$DAGSHUB_TOKEN"
+          dvc pull -j 4 train_cls train_yolo
+          ls -l ml/models ml/reports
+
+      - name: Construire l'image
+        run: docker build -t waste-sorting-api:ci .
+
+      - name: Lancer le conteneur
+        run: docker run -d --name ecotri-ci -p 8000:8000 waste-sorting-api:ci
+
+      - name: Test de fumée (/health, /info, /predict, page web)
+        run: python scripts/smoke_test.py http://127.0.0.1:8000
+
+      - name: Vérifier que le conteneur ne tourne pas en root
+        run: test "$(docker exec ecotri-ci whoami)" = "ecotri"
+
+      - name: Logs du conteneur
+        if: always()
+        run: docker logs ecotri-ci || true
+
+      - name: Taille de l'image
+        run: docker images waste-sorting-api:ci
