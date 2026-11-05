@@ -1,4 +1,7 @@
-# Lance toute l'application EcoTri : docker compose up --build -d
+# Lance toute l'application EcoTri et son monitoring : docker compose up --build -d
+#   API + page web : http://127.0.0.1:8000
+#   Prometheus     : http://127.0.0.1:9090   (les chiffres et les alertes)
+#   Grafana        : http://127.0.0.1:3000   (le tableau de bord)
 services:
   api:
     build: .
@@ -9,3 +12,43 @@ services:
     environment:
       SEUIL_DETECTION: "0.25"
     restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    container_name: ecotri-prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=7d   # garde 7 jours d'historique
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"   # seulement depuis ce PC
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:12.2.0
+    container_name: ecotri-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      # Mot de passe admin : variable GRAFANA_PASSWORD (fichier .env), sinon "admin"
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      # Le tableau de bord est visible sans se connecter (lecture seule)
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/dashboards/ecotri.json
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:   # l'historique des métriques survit à docker compose down
+  grafana-data:
