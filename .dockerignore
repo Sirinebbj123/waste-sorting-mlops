@@ -28,3 +28,7 @@ dvc_plots
 docs
 tests
 api/tests
+
+# Monitoring : lancé à côté de l'API, pas dans son image
+monitoring
+scripts

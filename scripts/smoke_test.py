@@ -101,6 +101,15 @@ def verifier_predict(base: str) -> None:
     )
 
 
+def verifier_metrics(base: str) -> None:
+    """Prometheus pourra lire les métriques, et la prédiction ci-dessus y est comptée."""
+    _, corps = lire(f"{base}/metrics")
+    texte = corps.decode()
+    if "ecotri_predictions_total" not in texte or "ecotri_modele_info" not in texte:
+        sys.exit("ERREUR : /metrics ne contient pas les métriques EcoTri")
+    print("OK  /metrics  (métriques Prometheus)")
+
+
 def verifier_page(base: str) -> None:
     _, corps = lire(f"{base}/")
     if b"EcoTri" not in corps:
@@ -113,5 +122,6 @@ if __name__ == "__main__":
     attendre_api(base)
     verifier_info(base)
     verifier_predict(base)
+    verifier_metrics(base)
     verifier_page(base)
     print("Test de fumée réussi")
