@@ -1,0 +1,40 @@
+# Règles d'alerte : visibles dans Prometheus, onglet Alerts (http://127.0.0.1:9090/alerts)
+groups:
+  - name: ecotri
+    rules:
+      - alert: ApiInjoignable
+        expr: up{job="ecotri-api"} == 0
+        for: 30s
+        labels:
+          severity: critique
+        annotations:
+          summary: "L'API EcoTri ne répond plus à Prometheus"
+
+      - alert: PredictionLente
+        expr: >
+          histogram_quantile(0.95,
+            sum by (le) (rate(ecotri_duree_requete_secondes_bucket{route="/predict"}[5m]))) > 2
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "95 % des analyses prennent plus de 2 secondes"
+
+      - alert: ConfianceDuModeleEnBaisse
+        expr: >
+          histogram_quantile(0.5, sum by (le) (rate(ecotri_confiance_matiere_bucket[10m]))) < 0.6
+        for: 5m
+        labels:
+          severity: attention
+        annotations:
+          summary: "La confiance médiane du classifieur est sous 0,6 : dérive possible des données"
+
+      - alert: TropDErreurs
+        expr: >
+          sum(rate(ecotri_requetes_total{statut=~"5.."}[5m]))
+            / sum(rate(ecotri_requetes_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critique
+        annotations:
+          summary: "Plus de 5 % des requêtes finissent en erreur serveur (5xx)"
