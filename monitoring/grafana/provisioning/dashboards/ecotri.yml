@@ -1,0 +1,9 @@
+# Grafana charge tout seul les tableaux de bord JSON du dossier monitoring/grafana/dashboards
+apiVersion: 1
+providers:
+  - name: EcoTri
+    folder: EcoTri
+    type: file
+    allowUiUpdates: false
+    options:
+      path: /etc/grafana/dashboards
