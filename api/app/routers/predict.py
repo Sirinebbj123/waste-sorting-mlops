@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from PIL import Image
 
 from app.inference import get_pipeline
+from app.metrics import enregistrer_prediction
 from app.schemas import PredictResponse
 
 router = APIRouter()
@@ -29,7 +30,10 @@ async def predict(
         # Exception large : Ultralytics modifie Image.open et peut lever d'autres erreurs
         raise HTTPException(status_code=400, detail="Le fichier n'est pas une image") from None
 
+
     debut = time.perf_counter()
     resultat = pipeline.predire(image)
-    duree_ms = round((time.perf_counter() - debut) * 1000, 1)
+    duree_s = time.perf_counter() - debut
+    enregistrer_prediction(resultat, duree_s)
+    duree_ms = round(duree_s * 1000, 1)
     return {**resultat, "nb_dechets": len(resultat["detections"]), "duree_ms": duree_ms}
