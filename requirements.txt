@@ -30,3 +30,5 @@ ipykernel
 
 PyYAML==6.0.3
 
+prometheus-client==0.26.0
+
