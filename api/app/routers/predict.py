@@ -30,7 +30,6 @@ async def predict(
         # Exception large : Ultralytics modifie Image.open et peut lever d'autres erreurs
         raise HTTPException(status_code=400, detail="Le fichier n'est pas une image") from None
 
-
     debut = time.perf_counter()
     resultat = pipeline.predire(image)
     duree_s = time.perf_counter() - debut

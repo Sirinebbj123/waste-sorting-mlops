@@ -100,6 +100,7 @@ def verifier_predict(base: str) -> None:
         f"{resultat['duree_ms']} ms"
     )
 
+
 def verifier_metrics(base: str) -> None:
     """Prometheus pourra lire les métriques, et la prédiction ci-dessus y est comptée."""
     _, corps = lire(f"{base}/metrics")
@@ -107,6 +108,7 @@ def verifier_metrics(base: str) -> None:
     if "ecotri_predictions_total" not in texte or "ecotri_modele_info" not in texte:
         sys.exit("ERREUR : /metrics ne contient pas les métriques EcoTri")
     print("OK  /metrics  (métriques Prometheus)")
+
 
 def verifier_page(base: str) -> None:
     _, corps = lire(f"{base}/")
