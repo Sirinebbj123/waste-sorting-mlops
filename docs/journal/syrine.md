@@ -1,5 +1,10 @@
 
 # Journal de bord · Syrine
+## 2026-11-05 · Tâche 10 : monitoring (Prometheus et Grafana)
+- Fait : (ne change pas cette ligne)
+- Résultat : 20 tests passent, CI verte ; tableau de bord rempli avec 54 photos (62 déchets : 47 jaune, 8 grise, 7 verte) ; alerte ApiInjoignable firing en 40 s quand l'API est arrêtée
+- Compris : (ne change pas cette ligne)
+- Bloqué : ruff format sur 6 fichiers (corrigé avec ruff format .) ; ecotri.json mis dans le mauvais dossier (déplacé dans monitoring/grafana/dashboards) ; fausse alerte VS Code sur le fichier datasource (renommé en datasource.yml)
 ## 2026-11-04 · Tâche 9 : CD et protection de main
 - Fait : cd.yml (build, test de fumée, publication sur ghcr.io, Release automatique), secrets DagsHub, badges, décision 0003, protection de main
 - Résultat : image publiée ghcr.io/sirinebbj123/waste-sorting-mlops:v0.8-cicd
