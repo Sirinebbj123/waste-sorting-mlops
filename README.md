@@ -55,3 +55,25 @@ pytest
 docker compose up --build -d
 python scripts/smoke_test.py http://127.0.0.1:8000
 ```
+## Monitoring (Prometheus et Grafana)
+
+`docker compose up --build -d` lance l'API **et** son monitoring :
+
+| Service | Adresse | Pour quoi faire |
+|---|---|---|
+| API + application | http://127.0.0.1:8000 | analyser des photos |
+| Métriques brutes | http://127.0.0.1:8000/metrics | ce que lit Prometheus |
+| Prometheus | http://127.0.0.1:9090 | requêtes PromQL, cibles, **alertes** |
+| Grafana | http://127.0.0.1:3000 | le tableau de bord « EcoTri · Tri des déchets » |
+
+Le tableau de bord s'ouvre directement (lecture seule). Pour le modifier : connexion `admin`,
+mot de passe `admin` ou celui de la variable `GRAFANA_PASSWORD` (fichier `.env`, jamais commité).
+
+Remplir le tableau de bord avec des photos :
+```bash
+python scripts/generer_trafic.py --dossier ml/data/processed/trashnet/test --nombre 60
+```
+
+Configuration : `monitoring/prometheus/` (collecte et alertes), `monitoring/grafana/`
+(source de données et tableau de bord, chargés automatiquement). Choix expliqués dans
+[docs/decisions/0004-monitoring.md](docs/decisions/0004-monitoring.md).
